@@ -163,9 +163,9 @@ jobs:
             if(!keepBox)$('#scanbox').style.display='none';
           }
           function onScan(code){
-            var now=Date.now();if(code===lastC&&now-lastT<1500)return;lastC=code;lastT=now;
-            beep();
-            if(scanCtx==='prod'){draft.code=code;stopScan();render();toast('Código leído: '+code)}
+            if(!scanner)return;
+            beep();stopScan();
+            if(scanCtx==='prod'){draft.code=code;render();toast('Código leído: '+code)}
             else addCode(code);
           }
           $('#stopscan').onclick=function(){stopScan()};
@@ -277,6 +277,56 @@ jobs:
           npx cap add android
           npx cap sync android
           sed -i 's#</manifest>#<uses-permission android:name="android.permission.CAMERA"/><uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29"/><uses-feature android:name="android.hardware.camera" android:required="false"/></manifest>#' android/app/src/main/AndroidManifest.xml
+          mkdir -p ~/.android
+          base64 -d > ~/.android/debug.keystore <<'EOF'
+          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
+          EOF
           cd android && chmod +x gradlew && ./gradlew assembleDebug
       - uses: softprops/action-gh-release@v2
         with:
